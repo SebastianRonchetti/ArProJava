@@ -1,0 +1,5 @@
+Juan;Argentina;Curazao;G;
+Carlos;Arabia Saudita;Argentina;P;
+Miguel;Argentina;Francia;G;
+Jacques;Francia;Argentina;G;
+Marcos;Francia;Segundo;E;

@@ -1,0 +1,4 @@
+Argentina;7;Curazao;0;
+Argentina;0;Arabia Saudita;2;
+Argentina;7;Francia;5;
+Francia;0;Segundo;0;
