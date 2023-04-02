@@ -3,6 +3,7 @@ package calculo;
 import clases.Partido;
 import clases.Apostador;
 import clases.Equipo;
+import clases.Prediccion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ public class Resultados {
 
 	private static Partido part;
 	private static Apostador apos;
+	private static Prediccion pred;
 	private static Equipo eq1;
 	private static Equipo eq2;
 	private static String mensaje; 
@@ -27,49 +29,40 @@ public class Resultados {
 		fillApostadores();
 		
 		for(Apostador apostador: apostadores) {
-			mensaje = "Resultado incorrecto.\n";
-			for(Partido partido: torneo) {
-				String titularApostador = apostador.getEquipo1();
-				String competidorApostador = apostador.getEquipo2();
-				String prediccionApostador = apostador.getGanaEmpataPierde();
-				String e1Nombre = partido.getEquipo1().getNombre();
-				String e2Nombre = partido.getEquipo2().getNombre();
-				
-				if(e1Nombre.equals(titularApostador) || e2Nombre.equals(titularApostador)) {
-					if(e1Nombre.equals(competidorApostador) || e2Nombre.equals(competidorApostador)) {
-						String resultado = partido.getResult();
-						
-						if(resultado != "Empate") {
-							if(titularApostador.equals(resultado) && prediccionApostador.equals("G")) {
-								apostador.setPuntaje(1);
-								
-								mensaje = apostador.getNombre() + " acertó en el partido: " + e1Nombre + " vs. " + e2Nombre + 
-										". Nuevo puntaje: " + apostador.getPuntaje() + ". Resultado del partido: " + titularApostador + " Ganó.\n";
-								
-								System.out.print(mensaje);
-							} else if (titularApostador != resultado && prediccionApostador.equals("P")){
-								apostador.setPuntaje(1);
-								
-								mensaje = apostador.getNombre() + " acertó en el partido: " + e1Nombre + " vs. " + e2Nombre + 
-										". Nuevo puntaje: " + apostador.getPuntaje() + ". Resultado del partido: " + titularApostador + " Perdió.\n";
-								
-								System.out.print(mensaje);
-							} else {
-								System.out.print(mensaje);
+			for(Prediccion pre: apostador.getPredicciones()) {
+				mensaje = "Resultado incorrecto.\n";
+				for(Partido partido: torneo) {
+					String titularApostador = pre.getEquipo1();
+					String competidorApostador = pre.getEquipo2();
+					String prediccionApostador = pre.getGanaEmpataPierde();
+					String e1Nombre = partido.getEquipo1().getNombre();
+					String e2Nombre = partido.getEquipo2().getNombre();
+					
+					if(e1Nombre.equals(titularApostador) || e2Nombre.equals(titularApostador)) {
+						if(e1Nombre.equals(competidorApostador) || e2Nombre.equals(competidorApostador)) {
+							String resultado = partido.getResult();
+							/*System.out.printf("\n" + apostador.getNombre() + " " + apostador.getPuntaje() + " " + titularApostador + " " 
+									+ e1Nombre + " " + competidorApostador + " " + e2Nombre + " " + prediccionApostador + " " + resultado);*/
+							if(resultado != "Empate") {
+								if(titularApostador.equals(resultado) && prediccionApostador.equals("G1")) {
+									apostador.addToPuntaje(1);
+									//System.out.print("\n" + apostador.getNombre() + " Gana titular");
+								} else if (!titularApostador.equals(resultado) && prediccionApostador.equals("G2")){
+									apostador.addToPuntaje(1);
+									//System.out.print("\n" + apostador.getNombre()  + " gana competidor" + titularApostador);
+								}
+							} else if(resultado.equals("Empate") && prediccionApostador.equals("E")) {
+								apostador.addToPuntaje(1);
+								//System.out.printf("\n" + apostador.getNombre() + " Empata");
 							}
-						} else if(resultado.equals("Empate") && prediccionApostador.equals("E")) {
-							apostador.setPuntaje(1);
 							
-							mensaje = apostador.getNombre() + " acertó en el partido: " + e1Nombre + " vs. " + e2Nombre + 
-									". Nuevo puntaje: " + apostador.getPuntaje() + ". Resultado del partido: " + titularApostador + " Empató.\n";
-							
-							System.out.print(mensaje);
-						} else {
-							System.out.print(mensaje);
+							System.out.printf("\n" + apostador.getNombre() + " " + apostador.getPuntaje() + " " + titularApostador + " " 
+									+ e1Nombre + " " + competidorApostador + " " + e2Nombre + " " + prediccionApostador + " " + resultado);
 						}
 					}
 				}
 			}
+			System.out.printf("\n"+ apostador.getNombre()+ " " + apostador.getPuntaje());
 		}
 	}
 	
@@ -95,17 +88,34 @@ public class Resultados {
 	private static void fillApostadores() throws Exception {
 		try {
 			for(String linea: Files.readAllLines(Paths.get("src\\main\\java\\Archivo\\apostadores.txt"))) {
-
-				String pronostico = linea.split(";")[3];
+				apos = null;
+				int nroMiembro = Integer.parseInt(linea.split(";")[0]);
+				String pronostico = linea.split(";")[4];
 				
-				if(pronostico.equals("G")|| pronostico.equals("E")|| pronostico.equals("P")) {
-					apos = new Apostador(linea.split(";")[0], linea.split(";")[1], linea.split(";")[2], linea.split(";")[3]);
-					
+				for(Apostador ap: apostadores) {
+					int nroActual = ap.getNroMiembro();
+					if(nroActual == nroMiembro) {
+						apos = ap;
+						break;
+					}
+				}
+				
+				if(apos == null) {
+					apos = new Apostador(Integer.parseInt(linea.split(";")[0]), linea.split(";")[1]);
 					apostadores.add(apos);
+				}
+				
+				if(pronostico.equals("G1")|| pronostico.equals("E")|| pronostico.equals("G2")) {
+					pred = null;
+					pred = new Prediccion(linea.split(";")[2], linea.split(";")[3], pronostico);
+					apos.getPredicciones().add(pred);
+					
 				} else {
 					System.out.print(pronostico);
 				}
 			}
+			
+			apos = null;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

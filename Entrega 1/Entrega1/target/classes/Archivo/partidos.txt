@@ -1,4 +1,7 @@
 Argentina;7;Curazao;0;
-Argentina;0;Arabia Saudita;2;
+Argentina;1;Arabia Saudita;2;
 Argentina;7;Francia;5;
 Francia;0;Segundo;0;
+Mexico;0;Polonia;0;
+Argentina;2;Mexico;0;
+Arabia Saudita;0;Polonia;2;
