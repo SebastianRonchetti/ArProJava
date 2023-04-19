@@ -8,6 +8,8 @@ public class Apostador {
 	private int nroMiembro;
 	private String nombre;
 	private int puntaje;
+	private int aciertosRonda;
+	private int aciertosFase;
 	
 	private List<Prediccion> predicciones = new ArrayList<Prediccion>();
 	
@@ -46,5 +48,26 @@ public class Apostador {
 	
 	public int getPuntaje() {
 		return this.puntaje;
+	}
+
+	public int getAciertosFase() {
+		return aciertosFase;
+	}
+
+	public int getAciertosRonda() {
+		return aciertosRonda;
+	}
+
+	public void addAciertosRonda(int aciertosRonda) {
+		this.aciertosRonda += aciertosRonda;
+		aciertosFase += aciertosRonda;
+	}
+	
+	public void resetRonda() {
+		this.aciertosRonda = 0;
+	}
+	
+	public void resetFase() {
+		this.aciertosFase = 0;
 	}
 }
